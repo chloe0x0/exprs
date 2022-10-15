@@ -1,3 +1,6 @@
+use exprs::*;
+
 fn main() {
-    println!("Hello, world!");
+    let token = Token::new("+", Type::SUM, 0);
+    println!("{:?}", token);
 }
