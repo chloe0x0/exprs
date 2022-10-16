@@ -24,11 +24,14 @@ pub fn tokenize(expr: String) -> Vec<Token> {
 
     let mut stream = expr.chars().peekable();
 
+    let mut is_sub: bool = false;
+
     while let Some(&c) = stream.peek() {
         match c {
             // must be a numeric literal
             '0'..='9' => {
                 tokens.push(Token::Num(get_literal(&mut stream)));
+                is_sub = true;
             }
             '(' => {
                 tokens.push(Token::LP);
@@ -38,8 +41,21 @@ pub fn tokenize(expr: String) -> Vec<Token> {
                 tokens.push(Token::RP);
                 stream.next();
             }
+            // - should be handled seperate from other operators
+            // can be a binary operator 
+            // or a unary one (negation)
+            '-' => {
+                if is_sub {
+                    tokens.push(Token::Bin(Op::SUB));
+                    is_sub = false;
+                } else {
+                    tokens.push(Token::Una(Op::NEG));
+                }
+
+                stream.next();
+            }
             // Binary Operator
-            '-' | '+' | '*' | '/' | '^' => {
+            '+' | '*' | '/' | '^' => {
                 let op = Op::from_char(c).expect("Could not parse operator");
                 tokens.push(Token::Bin(op));
 

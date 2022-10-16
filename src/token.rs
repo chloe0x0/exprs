@@ -9,6 +9,7 @@ pub enum Op {
     MUL,
     /// Unary Operations
     FAC,
+    NEG,
 }
 
 impl Op {
@@ -30,6 +31,7 @@ impl Op {
 pub enum Token {
     Num(f32),    // Numeric literal
     Bin(Op),     // Binary Operator
+    Una(Op),     // Unary Operator
     Fn(String),  // function identifier
     Var(String), // variable type
     LP,
