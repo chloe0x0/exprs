@@ -1,6 +1,7 @@
 use exprs::*;
 
 fn main() {
-    let token = Token::new("+", Type::SUM, 0);
-    println!("{:?}", token);
+    let expr = String::from("1 - 200.5 * (2 + 4)");
+    println!("Tokenizing : {}", expr);
+    println!("{:?}", tokenize(expr));
 }

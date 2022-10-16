@@ -1,37 +1,37 @@
-
 #[derive(Debug)]
-pub enum Type {
-    SUM, SUB, EXP, DIV, MUL,    // Binary Operations
-
-    NUM,                        // Numeric Literal
-    VAR,                        // Variable type
-    FUN,                        // Function
-    RP, LP,                     // Parens
+/// Operations
+pub enum Op {
+    /// Binary Operations
+    SUM,
+    SUB,
+    EXP,
+    DIV,
+    MUL,
+    /// Unary Operations
+    FAC,
 }
 
-impl Type {
-    pub fn from_str(&self, s: &str) -> Self {
+impl Op {
+    pub fn from_char(s: char) -> Result<Op, String> {
         match s {
-            "+" => Type::SUM,
-            "-" => Type::SUB,
-            "/" => Type::DIV,
-            "*" => Type::MUL,
-            "(" => Type::LP,
-            ")" => Type::RP,
-            _ => Type::NUM
+            '-' => Ok(Op::SUB),
+            '+' => Ok(Op::SUM),
+            '*' => Ok(Op::MUL),
+            '/' => Ok(Op::DIV),
+            '^' => Ok(Op::EXP),
+
+            _ => Err(format!("Could not parse {} as operator", s)),
         }
     }
 }
 
 #[derive(Debug)]
-pub struct Token {
-    flag: Type,
-    lexeme: String,
-    val: i32,
-}
-
-impl Token {
-    pub fn new(lex: &str, flag: Type, val: i32) -> Self {
-        Token { flag: flag, lexeme: lex.to_string(), val: val }
-    }
+/// Token type
+pub enum Token {
+    Num(f32),    // Numeric literal
+    Bin(Op),     // Binary Operator
+    Fn(String),  // function identifier
+    Var(String), // variable type
+    LP,
+    RP, // Parens
 }

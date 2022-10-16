@@ -1,6 +1,7 @@
-
+// Token type
 pub mod token;
 pub use token::*;
 
-
-
+// Bring in the Lexer
+pub mod lexer;
+pub use lexer::*;
