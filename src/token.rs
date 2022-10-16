@@ -20,6 +20,7 @@ impl Op {
             '*' => Ok(Op::MUL),
             '/' => Ok(Op::DIV),
             '^' => Ok(Op::EXP),
+            '!' => Ok(Op::FAC),
 
             _ => Err(format!("Could not parse {} as operator", s)),
         }
@@ -29,11 +30,49 @@ impl Op {
 #[derive(Debug)]
 /// Token type
 pub enum Token {
-    Num(f32),    // Numeric literal
-    Bin(Op),     // Binary Operator
-    Una(Op),     // Unary Operator
-    Fn(String),  // function identifier
-    Var(String), // variable type
+    /// Numeric Literal
+    Num(f64),
+    /// Binary Operator
+    Bin(Op),
+    /// Unary Operator
+    Una(Op),
+    /// Function identifier
+    Fn(String),
+    /// Variable identifier
+    Var(String),
+    /// Left Paren
     LP,
-    RP, // Parens
+    /// Right Paren
+    RP,
+}
+
+impl Token {
+    #[inline]
+    pub fn is_bin(&self) -> bool {
+        matches!(*self, Token::Bin(_))
+    }
+    #[inline]
+    pub fn is_una(&self) -> bool {
+        matches!(*self, Token::Una(_))
+    }
+    #[inline]
+    pub fn is_fn(&self) -> bool {
+        matches!(*self, Token::Fn(_))
+    }
+    #[inline]
+    pub fn is_var(&self) -> bool {
+        matches!(*self, Token::Var(_))
+    }
+    #[inline]
+    pub fn is_num(&self) -> bool {
+        matches!(*self, Token::Num(_))
+    }
+    #[inline]
+    pub fn is_lp(&self) -> bool {
+        matches!(*self, Token::LP)
+    }
+    #[inline]
+    pub fn is_rp(&self) -> bool {
+        matches!(*self, Token::RP)
+    }
 }
