@@ -2,7 +2,7 @@ use crate::token::*;
 use std::iter::Peekable;
 
 /// Parse a numeric literal from a peekable iterator
-fn get_literal<T: Iterator<Item = char>>(it: &mut Peekable<T>) -> f64 {
+fn get_literal<T: Iterator<Item = char>>(it: &mut Peekable<T>) -> Token {
     let mut lexeme = String::new();
 
     while let Some(&c) = it.peek() {
@@ -16,18 +16,34 @@ fn get_literal<T: Iterator<Item = char>>(it: &mut Peekable<T>) -> f64 {
         it.next();
     }
 
-    lexeme
-        .parse::<f64>()
-        .expect(&format!("Could not parse '{}' as an f64!", lexeme))
+    Token::Num(
+        lexeme
+            .parse::<f64>()
+            .expect(&format!("Could not parse '{}' as an f64!", lexeme)),
+    )
 }
 
 // get identifier (function or variable) from the iterator
+// no support for functions yet
 fn get_ident<T: Iterator<Item = char>>(it: &mut Peekable<T>) -> Token {
-    todo!()
+    let mut lexeme = String::new();
+
+    while let Some(&c) = it.peek() {
+        match c {
+            'a'..='z' | 'A'..='Z' => {
+                lexeme.push(c);
+            }
+            _ => break,
+        }
+    }
+
+    Token::Var(lexeme)
 }
 
-pub fn tokenize(expr: String) -> Vec<Token> {
-    let mut tokens = Vec::new();
+/// The scanner/ lexer/ tokenizer
+/// Converts a character stream into a vector of lexical tokens
+pub fn tokenize(expr: &String) -> Vec<Token> {
+    let mut tokens = Vec::with_capacity(expr.len()); // by setting capacity to num of chars in string we should get less reallocs
 
     let mut stream = expr.chars().peekable();
 
@@ -37,7 +53,7 @@ pub fn tokenize(expr: String) -> Vec<Token> {
         match c {
             // must be a numeric literal
             '0'..='9' => {
-                tokens.push(Token::Num(get_literal(&mut stream)));
+                tokens.push(get_literal(&mut stream));
                 is_sub = true; // next - will be a subtraction
             }
             'a'..='z' | 'A'..='Z' => {
