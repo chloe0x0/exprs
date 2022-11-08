@@ -1,6 +1,5 @@
 use crate::lexer::*;
 use crate::token::*;
-use std::collections::VecDeque;
 
 /// An implementation of the Shunting Yard Algorithm for parsing infix expressions into an AST
 #[derive(Clone)]
@@ -36,54 +35,53 @@ impl AST {
 pub fn parse(expr: &String) -> AST {
     let tokens = tokenize(expr);
 
-    let mut op_stack: Vec<AstNode> = Vec::with_capacity(tokens.len()); // Operator Stack
-    let mut out: VecDeque<AstNode> = VecDeque::with_capacity(tokens.len()); // Output Queue
+    let mut operator_stack: Vec<Token> = Vec::with_capacity(tokens.len());
+    let mut output: Vec<AstNode> = Vec::with_capacity(tokens.len());
 
     for token in tokens.into_iter() {
         match token {
-            Token::LP => op_stack.push(AstNode::new(token, None, None)),
+            Token::LP => operator_stack.push(token.to_owned()),
             Token::RP => {
-                let mut found_left_paren: bool = false;
-                while op_stack.len() != 0 {
-                    let mut popped = op_stack.pop().unwrap();
-                    if popped.tok == Token::LP {
-                        found_left_paren = true;
-                        break;
-                    } else {
-                        assert!(op_stack.len() >= 2);
-
-                        let rhs = op_stack.pop().unwrap();
-                        let lhs = op_stack.pop().unwrap();
-
-                        popped.rhs = Some(Box::new(rhs));
-                        popped.lhs = Some(Box::new(lhs));
+                while let t = operator_stack.last() {
+                    match t {
+                        Some(token) => {
+                            match token {
+                                Token::LP => break,
+                                _ => output.push(AstNode::new(token.to_owned(), None, None))
+                            }
+                        },
+                        None => panic!("Unbalanced parentheses!")
                     }
                 }
 
-                if !found_left_paren {
-                    panic!("Unbalanced parentheses!!!");
-                }
+                assert!(matches!(operator_stack.last(), Some(Token::LP)));
+                operator_stack.pop();
             }
-            Token::Num(_k) => out.push_front(AstNode::new(token, None, None)),
+            Token::Num(_k) => operator_stack.push(token.to_owned()),
             Token::Bin(op) => {
-                assert!(op_stack.len() != 0);
-
-                while op_stack.len() != 0 {
-                    let top = op_stack.first().unwrap();
-
-                    match top.tok {
-                        Token::Bin(o2) => {
-                            if 
-                        }
-                        _ => break,
+                while operator_stack.len() != 0 {
+                    let top = operator_stack.last().unwrap();
+                    if !top.is_bin() {
+                        break;
                     }
+
+                    // get the precedence of the second operator
+                    let o2_p = top.get_op().prec();
+                    // get the precedence of the current operator
+                    let o1_p = op.prec();
+
+                    if (o1_p < o2_p && op.assoc() == Assoc::RIGHT) || (o1_p == o2_p && op.assoc() == Assoc::LEFT) {
+                        break;
+                    }
+
+                    output.push(AstNode::new(operator_stack.pop().unwrap().to_owned(), None, None));
                 }
+
+                operator_stack.push(token.to_owned());
             }
-            _ => (),
+            _ => todo!()
         }
     }
-
-    let mut tree = AST::new();
 
     todo!()
 }

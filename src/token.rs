@@ -6,7 +6,7 @@ pub enum Assoc {
     RIGHT,
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 /// Operations
 pub enum Op {
     /// Binary Operations
@@ -69,4 +69,23 @@ pub enum Token {
     LP,
     /// Right Paren
     RP,
+}
+
+impl Token {
+    /// check if the token is a binary operator
+    #[inline]
+    pub fn is_bin(&self) -> bool {
+        matches!(self, Token::Bin(_x))
+    }
+    /// get the operator's token if its a binary operator, panic if not Binary op
+    #[inline]
+    pub fn get_op(&self) -> Op {
+        assert!(self.is_bin());
+
+        if let Token::Bin(op) = self {
+            op.clone()
+        } else {
+            unreachable!();
+        }
+    }
 }
