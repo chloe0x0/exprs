@@ -39,20 +39,18 @@ pub fn parse(expr: &String) -> AST {
     let mut output: Vec<AstNode> = Vec::with_capacity(tokens.len());
 
     for token in tokens.into_iter() {
-        println!("Parsing token: {:?}", token);
         match token {
             Token::LP => operator_stack.push(token.to_owned()),
             Token::RP => {
-                while let t = operator_stack.last() {
+                while operator_stack.len() != 0 {
+                    let t = operator_stack.last().unwrap();
+
                     match t {
-                        Some(token) => {
-                            match token {
-                                Token::LP => break,
-                                _ => output.push(AstNode::new(token.to_owned(), None, None))
-                            }
-                        },
-                        None => panic!("Unbalanced parentheses!")
+                        Token::LP => break,
+                        _ => output.push(AstNode::new(operator_stack.pop().unwrap().to_owned(), None, None))
                     }
+
+                    
                 }
 
                 assert!(matches!(operator_stack.last(), Some(Token::LP)));
