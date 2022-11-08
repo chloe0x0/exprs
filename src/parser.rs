@@ -2,7 +2,7 @@ use crate::lexer::*;
 use crate::token::*;
 
 /// An implementation of the Shunting Yard Algorithm for parsing infix expressions into an AST
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 struct AstNode {
     tok: Token,
     lhs: Option<Box<AstNode>>,
@@ -79,9 +79,18 @@ pub fn parse(expr: &String) -> AST {
 
                 operator_stack.push(token.to_owned());
             }
-            _ => todo!()
+            _ => ()
         }
     }
+
+    // while there are tokens to be read on the stack
+    while operator_stack.len() != 0 {
+        let top = operator_stack.last().unwrap();
+        assert!(!matches!(top, Token::LP)); // mismatched paren check
+        output.push(AstNode::new(top.to_owned(), None, None));
+    }
+
+    println!("{:?}", output);
 
     todo!()
 }
