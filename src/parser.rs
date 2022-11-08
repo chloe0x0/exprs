@@ -1,7 +1,6 @@
 use crate::lexer::*;
 use crate::token::*;
 
-/// An implementation of the Shunting Yard Algorithm for parsing infix expressions into an AST
 #[derive(Clone, Debug)]
 struct AstNode {
     tok: Token,
@@ -32,6 +31,7 @@ impl AST {
     }
 }
 
+/// An implementation of the Shunting Yard Algorithm for parsing infix expressions into an AST
 pub fn parse(expr: &String) -> AST {
     let tokens = tokenize(expr);
 
@@ -47,20 +47,26 @@ pub fn parse(expr: &String) -> AST {
 
                     match t {
                         Token::LP => break,
-                        _ => output.push(AstNode::new(operator_stack.pop().unwrap().to_owned(), None, None))
+                        _ => output.push(AstNode::new(
+                            operator_stack.pop().unwrap().to_owned(),
+                            None,
+                            None,
+                        )),
                     }
-
-                    
                 }
 
                 assert!(matches!(operator_stack.last(), Some(Token::LP)));
                 operator_stack.pop();
             }
-            Token::Num(_k) => operator_stack.push(token.to_owned()),
-            Token::Bin(op) => {
+            Token::Num(_k) => {
+                // leaf node
+                let node = AstNode::new(token.to_owned(), None, None);
+                output.push(node);
+            },
+            Token::Bin(op) | Token::Una(op) => {
                 while operator_stack.len() != 0 {
-                    let top = operator_stack.last().unwrap();
-                    if !top.is_bin() {
+                    let top = operator_stack.last().unwrap().to_owned();
+                    if !top.is_op() {
                         break;
                     }
 
@@ -69,16 +75,46 @@ pub fn parse(expr: &String) -> AST {
                     // get the precedence of the current operator
                     let o1_p = op.prec();
 
-                    if (o1_p < o2_p && op.assoc() == Assoc::RIGHT) || (o1_p == o2_p && op.assoc() == Assoc::LEFT) {
+                    if (o1_p < o2_p && op.assoc() == Assoc::RIGHT)
+                        || (o1_p == o2_p && op.assoc() == Assoc::LEFT)
+                    {
                         break;
                     }
 
-                    output.push(AstNode::new(operator_stack.pop().unwrap().to_owned(), None, None));
-                }
+                    if token.is_bin() {
+                        // binary operator needs two operands
+                        assert!(output.len() >= 2);
 
+                        let rhs = output.pop().unwrap();
+                        let lhs = output.pop().unwrap();
+
+                        let node = AstNode::new(
+                            token.to_owned(),
+                            Some(Box::new(rhs)),
+                            Some(Box::new(lhs)),
+                        );
+
+                        output.push(node);
+                    } else {
+                        // unary operator only needs one operand
+                        assert!(output.len() != 0);
+
+                        let operand = output.pop().unwrap();
+
+                        let node = AstNode::new(
+                            token.to_owned(),
+                            Some(Box::new(operand)),
+                            None
+                        );
+
+                        output.push(node);
+                    }
+
+                    // output.push(AstNode::new(operator_stack.pop().unwrap().to_owned(), None, None));
+                }
                 operator_stack.push(token.to_owned());
             }
-            _ => ()
+            _ => (),
         }
     }
 
