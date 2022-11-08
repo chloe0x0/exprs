@@ -39,6 +39,7 @@ pub fn parse(expr: &String) -> AST {
     let mut output: Vec<AstNode> = Vec::with_capacity(tokens.len());
 
     for token in tokens.into_iter() {
+        println!("Parsing token: {:?}", token);
         match token {
             Token::LP => operator_stack.push(token.to_owned()),
             Token::RP => {
@@ -85,7 +86,7 @@ pub fn parse(expr: &String) -> AST {
 
     // while there are tokens to be read on the stack
     while operator_stack.len() != 0 {
-        let top = operator_stack.last().unwrap();
+        let top = operator_stack.pop().unwrap();
         assert!(!matches!(top, Token::LP)); // mismatched paren check
         output.push(AstNode::new(top.to_owned(), None, None));
     }
