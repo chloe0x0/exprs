@@ -2,7 +2,7 @@ use crate::lexer::*;
 use crate::token::*;
 
 #[derive(Clone, Debug)]
-struct AstNode {
+pub struct AstNode {
     tok: Token,
     lhs: Option<Box<AstNode>>,
     rhs: Option<Box<AstNode>>,
@@ -17,17 +17,48 @@ impl AstNode {
             rhs: rhs,
         }
     }
+    pub fn eval_node(&self) -> f64 {
+        match self.tok {
+            Token::Num(k) => k,
+            Token::Bin(op) => {
+                match op {
+                    Op::SUB => self.lhs.unwrap().eval_node() - self.rhs.unwrap().eval_node(),
+                    Op::SUM => self.lhs.unwrap().eval_node() + self.rhs.unwrap().eval_node(),
+                    Op::MUL => self.lhs.unwrap().eval_node() * self.rhs.unwrap().eval_node(),
+                    Op::DIV => self.lhs.unwrap().eval_node() / self.rhs.unwrap().eval_node(),
+                    Op::EXP => self.lhs.unwrap().eval_node().powf(self.rhs.unwrap().eval_node()),
+                    _ => todo!()
+                }
+            },
+            Token::Una(op) => {
+                match op {
+                    Op::NEG => -self.lhs.unwrap().eval_node(),
+                    _ => todo!()
+                }
+            },
+            _ => todo!()
+        }
+    }
 }
 
+#[derive(Debug)]
 pub struct AST {
-    root: Option<Box<AstNode>>,
+    pub root: Option<Box<AstNode>>,
 }
 
 impl AST {
     #[inline]
     /// Create an empty AST
-    pub fn new() -> Self {
-        AST { root: None }
+    pub fn new(root: AstNode) -> Self {
+        AST { root: Some(Box::new(root)) }
+    }
+    pub fn eval(&self) -> Option<f64> {
+        match self.root {
+            None => None,
+            Some(ref r) => {
+                Some(r.eval_node())
+            }
+        }
     }
 }
 
@@ -56,13 +87,13 @@ pub fn parse(expr: &String) -> AST {
                 }
 
                 assert!(matches!(operator_stack.last(), Some(Token::LP)));
-                operator_stack.pop();
+                operator_stack.pop(); // pop off left paren
             }
             Token::Num(_k) => {
                 // leaf node
                 let node = AstNode::new(token.to_owned(), None, None);
                 output.push(node);
-            },
+            }
             Token::Bin(op) | Token::Una(op) => {
                 while operator_stack.len() != 0 {
                     let top = operator_stack.last().unwrap().to_owned();
@@ -90,8 +121,8 @@ pub fn parse(expr: &String) -> AST {
 
                         let node = AstNode::new(
                             token.to_owned(),
-                            Some(Box::new(rhs)),
                             Some(Box::new(lhs)),
+                            Some(Box::new(rhs)),
                         );
 
                         output.push(node);
@@ -101,17 +132,12 @@ pub fn parse(expr: &String) -> AST {
 
                         let operand = output.pop().unwrap();
 
-                        let node = AstNode::new(
-                            token.to_owned(),
-                            Some(Box::new(operand)),
-                            None
-                        );
+                        let node = AstNode::new(token.to_owned(), Some(Box::new(operand)), None);
 
                         output.push(node);
                     }
-
-                    // output.push(AstNode::new(operator_stack.pop().unwrap().to_owned(), None, None));
                 }
+
                 operator_stack.push(token.to_owned());
             }
             _ => (),
@@ -122,10 +148,33 @@ pub fn parse(expr: &String) -> AST {
     while operator_stack.len() != 0 {
         let top = operator_stack.pop().unwrap();
         assert!(!matches!(top, Token::LP)); // mismatched paren check
-        output.push(AstNode::new(top.to_owned(), None, None));
+
+        assert!(output.len() >= 2);
+        assert!(top.is_op());
+
+        if top.is_bin() {
+            let rhs = output.pop().unwrap();
+            let lhs = output.pop().unwrap();
+
+            output.push(AstNode::new(
+                top.to_owned(),
+                Some(Box::new(lhs)),
+                Some(Box::new(rhs)),
+            ));
+
+        } else {
+            assert!(output.len() != 0);
+            let operand = output.pop().unwrap();
+
+            output.push(AstNode::new(
+                top.to_owned(),
+                Some(Box::new(operand)),
+                None
+            ));
+        }
     }
 
-    println!("{:?}", output);
+    assert!(output.len() != 0);
 
-    todo!()
+    AST::new(output.pop().unwrap().to_owned())
 }

@@ -5,5 +5,8 @@ fn main() {
     println!("Tokenizing : {}", expr);
     println!("{:?}", tokenize(&expr));
 
-    parse(&expr);
+    let tree = parse(&expr);
+    println!("{:?}", tree);
+
+    println!("Eval: ");
 }
