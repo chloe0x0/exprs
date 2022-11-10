@@ -22,17 +22,17 @@ impl AstNode {
             Token::Num(k) => k,
             Token::Bin(op) => {
                 match op {
-                    Op::SUB => self.lhs.unwrap().eval_node() - self.rhs.unwrap().eval_node(),
-                    Op::SUM => self.lhs.unwrap().eval_node() + self.rhs.unwrap().eval_node(),
-                    Op::MUL => self.lhs.unwrap().eval_node() * self.rhs.unwrap().eval_node(),
-                    Op::DIV => self.lhs.unwrap().eval_node() / self.rhs.unwrap().eval_node(),
-                    Op::EXP => self.lhs.unwrap().eval_node().powf(self.rhs.unwrap().eval_node()),
+                    Op::SUB => self.lhs.as_ref().unwrap().eval_node() - self.rhs.as_ref().unwrap().eval_node(),
+                    Op::SUM => self.lhs.as_ref().unwrap().eval_node() + self.rhs.as_ref().unwrap().eval_node(),
+                    Op::MUL => self.lhs.as_ref().unwrap().eval_node() * self.rhs.as_ref().unwrap().eval_node(),
+                    Op::DIV => self.lhs.as_ref().unwrap().eval_node() / self.rhs.as_ref().unwrap().eval_node(),
+                    Op::EXP => self.lhs.as_ref().unwrap().eval_node().powf(self.rhs.as_ref().unwrap().eval_node()),
                     _ => todo!()
                 }
             },
             Token::Una(op) => {
                 match op {
-                    Op::NEG => -self.lhs.unwrap().eval_node(),
+                    Op::NEG => -self.lhs.as_ref().unwrap().eval_node(),
                     _ => todo!()
                 }
             },
