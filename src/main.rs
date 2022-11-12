@@ -1,20 +1,11 @@
 use exprs::*;
 
 fn main() {
-    let expr = String::from("(1 + -1)");
+    let expr = String::from("(1 + -1) * (2 + 3)");
 
-    println!("Tokens: {:?}", tokenize(&expr));
+    let tree: AST = parse(&expr);
 
-    println!(
-        "{} = {}",
-        expr,
-        parse(&expr).eval().expect("Could not evaluate")
-    );
-    /*
-    println!("Tokenizing : {}", expr);
-    println!("{:?}", tokenize(&expr));
+    let computation = tree.eval().expect("Could not parse expression");
 
-    let tree = parse(&expr);
-    println!("{:?}", tree);
-    */
+    println!("{} = {}", expr, computation);
 }
