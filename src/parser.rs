@@ -20,23 +20,32 @@ impl AstNode {
     pub fn eval_node(&self) -> f64 {
         match self.tok {
             Token::Num(k) => k,
-            Token::Bin(op) => {
-                match op {
-                    Op::SUB => self.lhs.as_ref().unwrap().eval_node() - self.rhs.as_ref().unwrap().eval_node(),
-                    Op::SUM => self.lhs.as_ref().unwrap().eval_node() + self.rhs.as_ref().unwrap().eval_node(),
-                    Op::MUL => self.lhs.as_ref().unwrap().eval_node() * self.rhs.as_ref().unwrap().eval_node(),
-                    Op::DIV => self.lhs.as_ref().unwrap().eval_node() / self.rhs.as_ref().unwrap().eval_node(),
-                    Op::EXP => self.lhs.as_ref().unwrap().eval_node().powf(self.rhs.as_ref().unwrap().eval_node()),
-                    _ => todo!()
+            Token::Bin(op) => match op {
+                Op::SUB => {
+                    self.lhs.as_ref().unwrap().eval_node() - self.rhs.as_ref().unwrap().eval_node()
                 }
-            },
-            Token::Una(op) => {
-                match op {
-                    Op::NEG => -self.lhs.as_ref().unwrap().eval_node(),
-                    _ => todo!()
+                Op::SUM => {
+                    self.lhs.as_ref().unwrap().eval_node() + self.rhs.as_ref().unwrap().eval_node()
                 }
+                Op::MUL => {
+                    self.lhs.as_ref().unwrap().eval_node() * self.rhs.as_ref().unwrap().eval_node()
+                }
+                Op::DIV => {
+                    self.lhs.as_ref().unwrap().eval_node() / self.rhs.as_ref().unwrap().eval_node()
+                }
+                Op::EXP => self
+                    .lhs
+                    .as_ref()
+                    .unwrap()
+                    .eval_node()
+                    .powf(self.rhs.as_ref().unwrap().eval_node()),
+                _ => todo!(),
             },
-            _ => todo!()
+            Token::Una(op) => match op {
+                Op::NEG => -self.lhs.as_ref().unwrap().eval_node(),
+                _ => todo!(),
+            },
+            _ => todo!(),
         }
     }
 }
@@ -48,17 +57,40 @@ pub struct AST {
 
 impl AST {
     #[inline]
-    /// Create an empty AST
     pub fn new(root: AstNode) -> Self {
-        AST { root: Some(Box::new(root)) }
+        AST {
+            root: Some(Box::new(root)),
+        }
     }
     pub fn eval(&self) -> Option<f64> {
         match self.root {
             None => None,
-            Some(ref r) => {
-                Some(r.eval_node())
-            }
+            Some(ref r) => Some(r.eval_node()),
         }
+    }
+}
+
+/// Used in the Shunting Yard parser to handle popping operators
+fn pop_operator(op_stack: &mut Vec<Token>, out: &mut Vec<AstNode>, tok: &Token) -> () {
+    if tok.is_bin() {
+        // binary operator needs two operands
+        assert!(out.len() >= 2);
+
+        let rhs = out.pop().unwrap();
+        let lhs = out.pop().unwrap();
+
+        let node = AstNode::new(tok.to_owned(), Some(Box::new(lhs)), Some(Box::new(rhs)));
+
+        out.push(node);
+    } else {
+        // unary operator only needs one operand
+        assert!(out.len() != 0);
+
+        let operand = out.pop().unwrap();
+
+        let node = AstNode::new(tok.to_owned(), Some(Box::new(operand)), None);
+
+        out.push(node);
     }
 }
 
@@ -78,6 +110,10 @@ pub fn parse(expr: &String) -> AST {
 
                     match t {
                         Token::LP => break,
+                        Token::Bin(_op) | Token::Una(_op) => {
+                            let operator = operator_stack.pop().unwrap();
+                            pop_operator(&mut operator_stack, &mut output, &operator);
+                        },
                         _ => output.push(AstNode::new(
                             operator_stack.pop().unwrap().to_owned(),
                             None,
@@ -112,30 +148,7 @@ pub fn parse(expr: &String) -> AST {
                         break;
                     }
 
-                    if token.is_bin() {
-                        // binary operator needs two operands
-                        assert!(output.len() >= 2);
-
-                        let rhs = output.pop().unwrap();
-                        let lhs = output.pop().unwrap();
-
-                        let node = AstNode::new(
-                            token.to_owned(),
-                            Some(Box::new(lhs)),
-                            Some(Box::new(rhs)),
-                        );
-
-                        output.push(node);
-                    } else {
-                        // unary operator only needs one operand
-                        assert!(output.len() != 0);
-
-                        let operand = output.pop().unwrap();
-
-                        let node = AstNode::new(token.to_owned(), Some(Box::new(operand)), None);
-
-                        output.push(node);
-                    }
+                    pop_operator(&mut operator_stack, &mut output, &token);
                 }
 
                 operator_stack.push(token.to_owned());
@@ -149,29 +162,9 @@ pub fn parse(expr: &String) -> AST {
         let top = operator_stack.pop().unwrap();
         assert!(!matches!(top, Token::LP)); // mismatched paren check
 
-        assert!(output.len() >= 2);
         assert!(top.is_op());
 
-        if top.is_bin() {
-            let rhs = output.pop().unwrap();
-            let lhs = output.pop().unwrap();
-
-            output.push(AstNode::new(
-                top.to_owned(),
-                Some(Box::new(lhs)),
-                Some(Box::new(rhs)),
-            ));
-
-        } else {
-            assert!(output.len() != 0);
-            let operand = output.pop().unwrap();
-
-            output.push(AstNode::new(
-                top.to_owned(),
-                Some(Box::new(operand)),
-                None
-            ));
-        }
+        pop_operator(&mut operator_stack, &mut output, &top);
     }
 
     assert!(output.len() != 0);

@@ -80,7 +80,7 @@ impl Token {
     /// check if the token is an operator
     #[inline]
     pub fn is_op(&self) -> bool {
-        matches!(self, Token::Bin(_x)) || matches!(self, Token::Una(x))
+        matches!(self, Token::Bin(_x)) || matches!(self, Token::Una(_x))
     }
     /// get the operator's token if its a binary operator, panic if not Binary op
     #[inline]

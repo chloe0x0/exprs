@@ -86,6 +86,8 @@ pub fn tokenize(expr: &String) -> Vec<Token> {
                 let op = Op::from_char(c).expect("Could not parse operator");
                 tokens.push(Token::Bin(op));
 
+                is_sub = false;
+
                 stream.next();
             }
             '!' => {
