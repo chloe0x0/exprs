@@ -42,7 +42,7 @@ fn get_ident<T: Iterator<Item = char>>(it: &mut Peekable<T>) -> Token {
 
 /// The scanner/ lexer/ tokenizer
 /// Converts a character stream into a vector of lexical tokens
-pub fn tokenize(expr: &String) -> Vec<Token> {
+pub fn tokenize(expr: &str) -> Vec<Token> {
     let mut tokens = Vec::with_capacity(expr.len()); // by setting capacity to num of chars in string we should get less reallocs
 
     let mut stream = expr.chars().peekable();

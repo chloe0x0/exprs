@@ -71,7 +71,7 @@ impl AST {
 }
 
 /// Used in the Shunting Yard parser to handle popping operators
-fn pop_operator(op_stack: &mut Vec<Token>, out: &mut Vec<AstNode>, tok: &Token) -> () {
+fn pop_operator(out: &mut Vec<AstNode>, tok: &Token) -> () {
     if tok.is_bin() {
         // binary operator needs two operands
         assert!(out.len() >= 2);
@@ -95,7 +95,7 @@ fn pop_operator(op_stack: &mut Vec<Token>, out: &mut Vec<AstNode>, tok: &Token) 
 }
 
 /// An implementation of the Shunting Yard Algorithm for parsing infix expressions into an AST
-pub fn parse(expr: &String) -> AST {
+pub fn parse(expr: &str) -> AST {
     let tokens = tokenize(expr);
 
     let mut operator_stack: Vec<Token> = Vec::with_capacity(tokens.len());
@@ -112,8 +112,8 @@ pub fn parse(expr: &String) -> AST {
                         Token::LP => break,
                         Token::Bin(_op) | Token::Una(_op) => {
                             let operator = operator_stack.pop().unwrap();
-                            pop_operator(&mut operator_stack, &mut output, &operator);
-                        },
+                            pop_operator(&mut output, &operator);
+                        }
                         _ => output.push(AstNode::new(
                             operator_stack.pop().unwrap().to_owned(),
                             None,
@@ -148,7 +148,7 @@ pub fn parse(expr: &String) -> AST {
                         break;
                     }
 
-                    pop_operator(&mut operator_stack, &mut output, &token);
+                    pop_operator(&mut output, &token);
                 }
 
                 operator_stack.push(token.to_owned());
@@ -164,7 +164,7 @@ pub fn parse(expr: &String) -> AST {
 
         assert!(top.is_op());
 
-        pop_operator(&mut operator_stack, &mut output, &top);
+        pop_operator(&mut output, &top);
     }
 
     assert!(output.len() != 0);

@@ -82,7 +82,7 @@ impl Token {
     pub fn is_op(&self) -> bool {
         matches!(self, Token::Bin(_x)) || matches!(self, Token::Una(_x))
     }
-    /// get the operator's token 
+    /// get the operator's token
     #[inline]
     pub fn get_op(&self) -> Option<Op> {
         if let Token::Bin(op) = self {
