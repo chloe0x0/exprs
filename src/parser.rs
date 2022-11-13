@@ -138,12 +138,12 @@ pub fn parse(expr: &String) -> AST {
                     }
 
                     // get the precedence of the second operator
-                    let o2_p = top.get_op().prec();
+                    let o2_p = top.get_op().unwrap().prec();
                     // get the precedence of the current operator
                     let o1_p = op.prec();
 
-                    if (o1_p < o2_p && op.assoc() == Assoc::RIGHT)
-                        || (o1_p == o2_p && op.assoc() == Assoc::LEFT)
+                    if !(o1_p < o2_p && op.assoc() == Assoc::RIGHT)
+                        || (o1_p <= o2_p && op.assoc() == Assoc::LEFT)
                     {
                         break;
                     }

@@ -82,15 +82,15 @@ impl Token {
     pub fn is_op(&self) -> bool {
         matches!(self, Token::Bin(_x)) || matches!(self, Token::Una(_x))
     }
-    /// get the operator's token if its a binary operator, panic if not Binary op
+    /// get the operator's token 
     #[inline]
-    pub fn get_op(&self) -> Op {
-        assert!(self.is_bin());
-
+    pub fn get_op(&self) -> Option<Op> {
         if let Token::Bin(op) = self {
-            op.clone()
+            Some(op.clone())
+        } else if let Token::Una(op) = self {
+            Some(op.clone())
         } else {
-            unreachable!();
+            None
         }
     }
 }
