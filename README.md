@@ -16,6 +16,12 @@ fn main() {
 }
 ```
 
+## TODO
+* publish to crates.io
+* Add support for functions and variables
+* Add tests
+* More robust parse errors rather than assert macros
+
 
 ## How it works
 Expression String -> Lexer -> Tokens -> Parser -> AST -> Interpreter -> Output
