@@ -42,7 +42,7 @@ impl Op {
         }
     }
     /// Get the operator's precedence
-    pub fn prec(&self) -> u32 {
+    pub fn prec(&self) -> u8 {
         match *self {
             Op::EXP => 4,
             Op::SUB | Op::SUM => 2,

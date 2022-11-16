@@ -3,9 +3,9 @@ use crate::token::*;
 
 #[derive(Clone, Debug)]
 pub struct AstNode {
-    tok: Token,
-    lhs: Option<Box<AstNode>>,
-    rhs: Option<Box<AstNode>>,
+    pub tok: Token,
+    pub lhs: Option<Box<AstNode>>,
+    pub rhs: Option<Box<AstNode>>,
 }
 
 impl AstNode {
@@ -15,37 +15,6 @@ impl AstNode {
             tok: tok,
             lhs: lhs,
             rhs: rhs,
-        }
-    }
-    pub fn eval_node(&self) -> f64 {
-        match self.tok {
-            Token::Num(k) => k,
-            Token::Bin(op) => match op {
-                Op::SUB => {
-                    self.lhs.as_ref().unwrap().eval_node() - self.rhs.as_ref().unwrap().eval_node()
-                }
-                Op::SUM => {
-                    self.lhs.as_ref().unwrap().eval_node() + self.rhs.as_ref().unwrap().eval_node()
-                }
-                Op::MUL => {
-                    self.lhs.as_ref().unwrap().eval_node() * self.rhs.as_ref().unwrap().eval_node()
-                }
-                Op::DIV => {
-                    self.lhs.as_ref().unwrap().eval_node() / self.rhs.as_ref().unwrap().eval_node()
-                }
-                Op::EXP => self
-                    .lhs
-                    .as_ref()
-                    .unwrap()
-                    .eval_node()
-                    .powf(self.rhs.as_ref().unwrap().eval_node()),
-                _ => todo!(),
-            },
-            Token::Una(op) => match op {
-                Op::NEG => -self.lhs.as_ref().unwrap().eval_node(),
-                _ => todo!(),
-            },
-            _ => todo!(),
         }
     }
 }
@@ -62,16 +31,10 @@ impl AST {
             root: Some(Box::new(root)),
         }
     }
-    pub fn eval(&self) -> Option<f64> {
-        match self.root {
-            None => None,
-            Some(ref r) => Some(r.eval_node()),
-        }
-    }
 }
 
 /// Used in the Shunting Yard parser to handle popping operators
-fn pop_operator(out: &mut Vec<AstNode>, tok: &Token) -> () {
+fn pop_operator(out: &mut Vec<AstNode>, tok: &Token) {
     if tok.is_bin() {
         // binary operator needs two operands
         assert!(out.len() >= 2);

@@ -8,9 +8,9 @@ Parsing an expression is simple
 use exprs::*;
 
 fn main() {
-    let tree: AST = parse("1 + 2");
-
-    let computation: f64 = tree.eval().expect("Failed to evaluate expression");
+    let expr = Expr::new("1 + 2");
+ 
+    let computation = expr.eval();
 
     assert_eq!(computation, 3.0);
 }
@@ -18,10 +18,4 @@ fn main() {
 
 ## TODO
 * publish to crates.io
-* Add support for functions and variables
-* Add tests
 * More robust parse errors rather than assert macros
-
-
-## How it works
-Expression String -> Lexer -> Tokens -> Parser -> AST -> Interpreter -> Output

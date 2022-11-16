@@ -9,11 +9,11 @@ fn main() {
     // trim off the whitespace from read_line
     input = input.trim().to_string();
 
-    // Create the Abstract Syntax Tree
-    let tree = parse(&input);
+    // create an expr type
+    let expr = Expr::new(&input);
 
-    // Evaluate the abstract syntax tree
-    let result = tree.eval().unwrap();
+    // Evaluate
+    let computation = expr.eval();
 
-    println!("{} = {}", input, result);
+    println!("{} = {}", expr, computation);
 }
