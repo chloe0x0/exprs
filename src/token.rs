@@ -44,9 +44,9 @@ impl Op {
     /// Get the operator's precedence
     pub fn prec(&self) -> u32 {
         match *self {
+            Op::EXP => 4,
             Op::SUB | Op::SUM => 2,
             Op::MUL | Op::DIV => 3,
-            Op::EXP => 4,
             _ => 0,
         }
     }

@@ -142,13 +142,13 @@ pub fn parse(expr: &str) -> AST {
                     // get the precedence of the current operator
                     let o1_p = op.prec();
 
-                    if !(o1_p < o2_p && op.assoc() == Assoc::RIGHT)
+                    if (o1_p < o2_p && op.assoc() == Assoc::RIGHT)
                         || (o1_p <= o2_p && op.assoc() == Assoc::LEFT)
                     {
+                        pop_operator(&mut output, &operator_stack.pop().unwrap());
+                    } else {
                         break;
                     }
-
-                    pop_operator(&mut output, &token);
                 }
 
                 operator_stack.push(token.to_owned());
