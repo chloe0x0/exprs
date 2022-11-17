@@ -13,3 +13,7 @@ pub use parser::*;
 // Bring in the Expr type
 pub mod expr;
 pub use expr::*;
+
+// Builtin functions (currently only Factorial)
+pub mod builtins;
+pub use builtins::*;

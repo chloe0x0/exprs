@@ -42,7 +42,9 @@ impl Expr {
                 Op::EXP => self.eval_node(&node.lhs).powf(self.eval_node(&node.rhs)),
 
                 Op::NEG => -self.eval_node(&node.lhs),
-                _ => todo!()
+                Op::FAC => {
+                    fct(self.eval_node(&node.lhs))
+                }
             },
             _ => panic!("{:?} should not have been encountered", node.tok)
         }
