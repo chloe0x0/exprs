@@ -28,16 +28,25 @@ fn get_literal<T: Iterator<Item = char>>(it: &mut Peekable<T>) -> Token {
 fn get_ident<T: Iterator<Item = char>>(it: &mut Peekable<T>) -> Token {
     let mut lexeme = String::new();
 
+    let mut is_fn = false;
+
     while let Some(&c) = it.peek() {
         match c {
             'a'..='z' | 'A'..='Z' => {
                 lexeme.push(c);
             }
-            _ => break,
+            '(' => {
+                /// Need to parse function
+                todo!()
+            },
+            _ => break
         }
     }
 
-    Token::Var(lexeme)
+    match is_fn {
+        true => Token::Fn(lexeme),
+        false => Token::Var(lexeme)
+    }
 }
 
 /// The scanner/ lexer/ tokenizer

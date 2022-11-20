@@ -93,6 +93,11 @@ pub fn parse(expr: &str) -> AST {
                 let node = AstNode::new(token.to_owned(), None, None);
                 output.push(node);
             }
+            Token::Var(id) => {
+                let new_tok = Token::Var(id.clone());
+                let node = AstNode::new(new_tok.to_owned(), None, None);
+                output.push(node);
+            }
             Token::Bin(op) | Token::Una(op) => {
                 while operator_stack.len() != 0 {
                     let top = operator_stack.last().unwrap().to_owned();

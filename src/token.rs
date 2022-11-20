@@ -44,6 +44,7 @@ impl Op {
     /// Get the operator's precedence
     pub fn prec(&self) -> u8 {
         match *self {
+            Op::NEG => 5,
             Op::EXP | Op::FAC => 4,
             Op::SUB | Op::SUM => 2,
             Op::MUL | Op::DIV => 3,
@@ -70,6 +71,7 @@ pub enum Token {
     /// Right Paren
     RP,
 }
+
 
 impl Token {
     /// check if the token is a binary operator
