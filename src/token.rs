@@ -1,4 +1,13 @@
-/// Associativity of an operator
+/// # Associativity of an operator
+/// 
+/// Given a binary operator ~
+/// 
+/// And the expression: x ~ y ~ q
+/// 
+/// If ~ is left associative it is evaluated as: (x ~ y) ~ q
+/// 
+/// If it is right associative: x ~ (y ~ q)
+/// 
 #[derive(PartialEq)]
 pub enum Assoc {
     LEFT,
@@ -7,7 +16,14 @@ pub enum Assoc {
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-/// Operations
+/// # Operators
+/// 
+/// Current Operators:
+/// 
+/// Binary Operations: +, -, *, /, ^
+/// 
+/// Unary Operations: - (negation), ! (factorial)
+/// 
 pub enum Op {
     /// Binary Operations
     SUM,
@@ -21,6 +37,9 @@ pub enum Op {
 }
 
 impl Op {
+    /// Used to parse an Operator from a character
+    /// 
+    /// If a valid operator was not found, it returns an err type stating the character that couldn't be parsed
     pub fn from_char(s: char) -> Result<Op, String> {
         match s {
             '-' => Ok(Op::SUB),
@@ -34,6 +53,10 @@ impl Op {
         }
     }
     /// Get the operator's associativity
+    /// 
+    /// ```rs
+    /// assert_eq!(Op::EXP.assoc(), Assoc::RIGHT);
+    /// ```
     pub fn assoc(&self) -> Assoc {
         match *self {
             Op::SUM | Op::MUL | Op::SUB | Op::DIV => Assoc::LEFT,
@@ -42,6 +65,8 @@ impl Op {
         }
     }
     /// Get the operator's precedence
+    /// 
+    /// Higher precedence operators are evaluated before lower precedence operators
     pub fn prec(&self) -> u8 {
         match *self {
             Op::NEG => 5,
@@ -54,7 +79,20 @@ impl Op {
 }
 
 #[derive(Debug, PartialEq, Clone)]
-/// Token type
+/// # Token type
+/// 
+/// Encodes a lexical token
+/// 
+/// ## Variants
+/// 
+/// * Num(f64): A numeric literal
+///     * Token::Num(3.5); the token representing the numeric literal 3.5
+/// * Bin(op): A binary operator
+/// * Una(op): A unary operator
+/// * Fn(String): A function identifier (not yet implemented)
+/// * Var(String): A variable identifier
+/// * LP, RP: Left and Right parantheses
+/// 
 pub enum Token {
     /// Numeric Literal
     Num(f64),
@@ -71,7 +109,6 @@ pub enum Token {
     /// Right Paren
     RP,
 }
-
 
 impl Token {
     /// check if the token is a binary operator
