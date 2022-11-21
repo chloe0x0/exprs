@@ -1,14 +1,14 @@
-/// # Associativity of an operator
-/// 
-/// Given a binary operator ~
-/// 
-/// And the expression: x ~ y ~ q
-/// 
-/// If ~ is left associative it is evaluated as: (x ~ y) ~ q
-/// 
-/// If it is right associative: x ~ (y ~ q)
-/// 
 #[derive(PartialEq)]
+/// # Associativity of an operator
+///
+/// Given a binary operator ~
+///
+/// And the expression: x ~ y ~ q
+///
+/// If ~ is left associative it is evaluated as: (x ~ y) ~ q
+///
+/// If it is right associative: x ~ (y ~ q)
+///
 pub enum Assoc {
     LEFT,
     NONE,
@@ -17,13 +17,13 @@ pub enum Assoc {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 /// # Operators
-/// 
+///
 /// Current Operators:
-/// 
+///
 /// Binary Operations: +, -, *, /, ^
-/// 
+///
 /// Unary Operations: - (negation), ! (factorial)
-/// 
+///
 pub enum Op {
     /// Binary Operations
     SUM,
@@ -38,7 +38,7 @@ pub enum Op {
 
 impl Op {
     /// Used to parse an Operator from a character
-    /// 
+    ///
     /// If a valid operator was not found, it returns an err type stating the character that couldn't be parsed
     pub fn from_char(s: char) -> Result<Op, String> {
         match s {
@@ -53,7 +53,7 @@ impl Op {
         }
     }
     /// Get the operator's associativity
-    /// 
+    ///
     /// ```rs
     /// assert_eq!(Op::EXP.assoc(), Assoc::RIGHT);
     /// ```
@@ -65,7 +65,7 @@ impl Op {
         }
     }
     /// Get the operator's precedence
-    /// 
+    ///
     /// Higher precedence operators are evaluated before lower precedence operators
     pub fn prec(&self) -> u8 {
         match *self {
@@ -80,11 +80,11 @@ impl Op {
 
 #[derive(Debug, PartialEq, Clone)]
 /// # Token type
-/// 
+///
 /// Encodes a lexical token
-/// 
+///
 /// ## Variants
-/// 
+///
 /// * Num(f64): A numeric literal
 ///     * Token::Num(3.5); the token representing the numeric literal 3.5
 /// * Bin(op): A binary operator
@@ -92,7 +92,7 @@ impl Op {
 /// * Fn(String): A function identifier (not yet implemented)
 /// * Var(String): A variable identifier
 /// * LP, RP: Left and Right parantheses
-/// 
+///
 pub enum Token {
     /// Numeric Literal
     Num(f64),

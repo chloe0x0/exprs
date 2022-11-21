@@ -38,19 +38,35 @@ fn get_ident<T: Iterator<Item = char>>(it: &mut Peekable<T>) -> Token {
             '(' => {
                 /// Need to parse function
                 todo!()
-            },
-            _ => break
+            }
+            _ => break,
         }
     }
 
     match is_fn {
         true => Token::Fn(lexeme),
-        false => Token::Var(lexeme)
+        false => Token::Var(lexeme),
     }
 }
 
 /// The scanner/ lexer/ tokenizer
 /// Converts a character stream into a vector of lexical tokens
+///
+/// for example
+///
+/// ```rust
+/// let input = "1 + 2";
+///
+/// let tokens: Vec<Token> = tokenize(input);
+///
+/// println!("{:?}", tokens);
+/// ```
+///
+/// would output
+///
+/// ```terminal
+/// [Num(1.0), SUM, Num(2.0)]
+/// ```
 pub fn tokenize(expr: &str) -> Vec<Token> {
     let mut tokens = Vec::with_capacity(expr.len()); // by setting capacity to num of chars in string we should get less reallocs
 

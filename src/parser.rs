@@ -1,14 +1,13 @@
 /// The Parser is a modified Shunting Yard algorithm
-/// 
+///
 /// rather than converting infix expressions to postfix expressions it converts them to ASTs
-/// 
+///
 /// These ASTs can then be evaluated via a Post Order traversal
-
 use crate::lexer::*;
 use crate::token::*;
 
 #[derive(Clone, Debug)]
-/// A node in the Abstract Syntax Tree 
+/// A node in the Abstract Syntax Tree
 pub struct AstNode {
     pub tok: Token,
     pub lhs: Option<Box<AstNode>>,

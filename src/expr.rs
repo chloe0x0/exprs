@@ -20,7 +20,11 @@ impl std::fmt::Display for Expr {
 impl Expr {
     /// Create an Expr type from an Expression string
     pub fn new(expression: &str) -> Self {
-        Expr { tree: parse(expression), context: HashMap::new(), expr_string: expression.to_string() }
+        Expr {
+            tree: parse(expression),
+            context: HashMap::new(),
+            expr_string: expression.to_string(),
+        }
     }
     /// Evaluate an AST node
     fn eval_node(&self, node_ref: &Option<Box<AstNode>>) -> f64 {
@@ -28,11 +32,9 @@ impl Expr {
 
         match &node.tok {
             Token::Num(k) => *k,
-            Token::Var(id) => {
-                match self.context.get(id) {
-                    None => panic!("{} was not found in the Expr context", id),
-                    Some(x) => *x
-                }
+            Token::Var(id) => match self.context.get(id) {
+                None => panic!("{} was not found in the Expr context", id),
+                Some(x) => *x,
             },
             Token::Una(op) | Token::Bin(op) => match op {
                 Op::SUM => self.eval_node(&node.lhs) + self.eval_node(&node.rhs),
@@ -42,11 +44,9 @@ impl Expr {
                 Op::EXP => self.eval_node(&node.lhs).powf(self.eval_node(&node.rhs)),
 
                 Op::NEG => -self.eval_node(&node.lhs),
-                Op::FAC => {
-                    fct(self.eval_node(&node.lhs))
-                }
+                Op::FAC => fct(self.eval_node(&node.lhs)),
             },
-            _ => panic!("{:?} should not have been encountered", node.tok)
+            _ => panic!("{:?} should not have been encountered", node.tok),
         }
     }
     /// Evaluate the AST
