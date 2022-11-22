@@ -17,7 +17,7 @@
 //! Simply add the current version to your ```Cargo.toml``` dependency list
 //! ```toml
 //! [dependencies]
-//! exprs = "0.1"
+//! exprs = "0.1.1"
 //! ```
 //! in your crate root add
 //! ```rust
