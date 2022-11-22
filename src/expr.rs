@@ -50,10 +50,12 @@ impl Expr {
         }
     }
     /// Evaluate the AST
+    #[inline]
     pub fn eval(&self) -> f64 {
         self.eval_node(&self.tree.root)
     }
     /// Set a variable value
+    #[inline]
     pub fn set_var(&mut self, id: &str, val: f64) {
         *self.context.entry(id.to_string()).or_insert(val) = val;
     }
