@@ -6,6 +6,7 @@ license = "WTFPL"
 license-file = "/license"
 keywords = ["parser", "expression-parser", "math"]
 authors = ["chloe"]
+repository = "https://github.com/chloe0x0/exprs"
 
 description = "A 0 dependency math expression parser and evaluator in Rust. It aims to be simple to use and is more of an exercise than anything."
 
