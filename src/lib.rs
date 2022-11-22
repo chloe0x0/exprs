@@ -39,7 +39,7 @@ pub use builtins::*;
 
 #[cfg(test)]
 mod tests {
-    use crate::Expr;
+    use crate::{Expr, fct};
     #[test]
     fn test_ops() {
         let mut e = Expr::new("1  + 2");
@@ -56,5 +56,12 @@ mod tests {
 
         e = Expr::new("2^(3^1)");
         assert_eq!(e.eval(), 8.0);
+    }
+    #[test]
+    fn test_builtins() {
+        // Test factorials
+        assert_eq!(fct(5.0), 120.0);
+        assert_eq!(fct(1.0), 1.0);
+        assert_eq!(fct(10.0), 3628800.0);
     }
 }
