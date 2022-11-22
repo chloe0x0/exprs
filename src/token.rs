@@ -1,4 +1,4 @@
-#[derive(PartialEq)]
+#[derive(PartialEq, Debug)]
 /// # Associativity of an operator
 ///
 /// Given a binary operator ~
@@ -54,7 +54,8 @@ impl Op {
     }
     /// Get the operator's associativity
     ///
-    /// ```rs
+    /// ```rust
+    /// use exprs::{Op, Assoc};
     /// assert_eq!(Op::EXP.assoc(), Assoc::RIGHT);
     /// ```
     pub fn assoc(&self) -> Assoc {

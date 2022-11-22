@@ -1,3 +1,8 @@
+/// The Lexer
+/// 
+/// Tokenizes input expression strings
+
+
 use crate::token::*;
 use std::iter::Peekable;
 
@@ -55,6 +60,7 @@ fn get_ident<T: Iterator<Item = char>>(it: &mut Peekable<T>) -> Token {
 /// for example
 ///
 /// ```rust
+/// use exprs::{tokenize, Token};
 /// let input = "1 + 2";
 ///
 /// let tokens: Vec<Token> = tokenize(input);

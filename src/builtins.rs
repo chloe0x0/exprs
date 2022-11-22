@@ -1,6 +1,7 @@
 /// factorial of an f64, panics if the input is not a whole number, or is negative
 ///
-/// ```rs
+/// ```rust
+/// use exprs::fct;
 /// assert_eq!(fct(5.0), 120.0);
 /// ```
 pub fn fct(x: f64) -> f64 {
