@@ -29,5 +29,4 @@ extern crate exprs;
 
 
 ## TODO
-* publish to crates.io
 * More robust parse errors rather than assert macros
