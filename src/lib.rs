@@ -1,6 +1,6 @@
 //! # exprs
 //! 
-//!  A simple math expression parser in Rust
+//! A 0 dependency math expression parser and evaluator in Rust. It aims to be simple to use and is more of an exercise than anything. 
 //! 
 //! # Evaluating Expressions
 //! 
@@ -13,9 +13,18 @@
 //!     assert_eq!(expr.eval(), 3.0);
 //! }
 //! ```
+//! ## Installation
+//! Simply add the current version to your ```Cargo.toml``` dependency list
+//! ```toml
+//! [dependencies]
+//! exprs = "0.1"
+//! ```
+//! in your crate root add
+//! ```rust
+//! extern crate exprs;
+//! ```
 //! 
 //! 
-
 
 // Token type
 pub mod token;
